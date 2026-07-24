@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SDN Traffic Cop</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="noise-overlay"></div>
+
+    <!-- MAIN MENU -->
+
+    <div id="main-menu">
+
+        <div class="menu-card">
+
+            <p class="eyebrow">SDN CONTROLLER v2.4</p>
+
+            <h1>SDN TRAFFIC <span class="accent">COP</span></h1>
+
+            <p class="menu-sub">Take the seat of the SDN Controller. Route every packet, defend the network, keep uptime alive.</p>
+
+            <div class="menu-actions">
+                <button id="easy-btn" class="diff-btn diff-easy"><span>EASY</span><small>3 servers · 5 packet types</small></button>
+                <button id="medium-btn" class="diff-btn diff-medium"><span>MEDIUM</span><small>4 servers · 7 packet types</small></button>
+                <button id="hard-btn" class="diff-btn diff-hard"><span>HARD</span><small>5 servers · 11 packet types</small></button>
+            </div>
+
+            <button id="instruction-btn" class="ghost-btn">How To Play</button>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- INSTRUCTIONS -->
+
+    <div id="instructions-page" class="hidden">
+
+        <div class="menu-card">
+
+            <p class="eyebrow">BRIEFING</p>
+
+            <h1>HOW TO <span class="accent">PLAY</span></h1>
+
+            <div class="instructions-grid">
+
+                <div class="instr-block">
+                    <h3>Routing Keys</h3>
+                    <ul class="key-list">
+                        <li><kbd>0</kbd> Drop Box <em>(Malware only)</em></li>
+                        <li><kbd>1</kbd> Server A</li>
+                        <li><kbd>2</kbd> Server B</li>
+                        <li><kbd>3</kbd> Server C</li>
+                        <li><kbd>4</kbd> Server D</li>
+                        <li><kbd>5</kbd> Server E</li>
+                    </ul>
+                </div>
+
+                <div class="instr-block">
+                    <h3>Abilities</h3>
+                    <ul class="key-list">
+                        <li><kbd>F</kbd> Firewall</li>
+                        <li><kbd>R</kbd> Dynamic Routing</li>
+                        <li><kbd>T</kbd> Traffic Freeze</li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <p class="menu-sub">Route each packet to the server named in the Routing Policy Table. Misroutes and network events drain network health — watch the Health Monitor next to the Servers panel to see exactly why.</p>
+
+            <button id="back-btn" class="ghost-btn">Back to Menu</button>
+
+        </div>
+
+    </div>
+
+
+
+
+    <!-- GAME CONTAINER -->
+
+    <div id="game-container" class="hidden">
+
+
+        <!-- TOP PANEL -->
+
+        <div class="panel panel-header">
+
+            <div class="header-row">
+                <h1>SDN TRAFFIC <span class="accent">COP</span></h1>
+                <div id="health-wrap">
+                    <div class="health-label-row">
+                        <span>NETWORK HEALTH</span>
+                        <span id="health">100%</span>
+                    </div>
+                    <div id="health-bar-outer">
+                        <div id="health-bar-fill"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats">
+
+                <div class="stat-chip"><span class="stat-label">Difficulty</span><span id="difficulty" class="stat-value">-</span></div>
+                <div class="stat-chip"><span class="stat-label">Score</span><span id="score" class="stat-value">0</span></div>
+                <div class="stat-chip"><span class="stat-label">Routed</span><span id="routed" class="stat-value">0</span></div>
+                <div class="stat-chip"><span class="stat-label">Accuracy</span><span id="accuracy" class="stat-value">100%</span></div>
+                <div class="stat-chip"><span class="stat-label">Uptime</span><span id="uptime" class="stat-value">0s</span></div>
+                <div class="stat-chip"><span class="stat-label">Target</span><span id="target" class="stat-value">0</span></div>
+                <div class="stat-chip"><span class="stat-label">Stack</span><span id="stack" class="stat-value">0/0</span></div>
+
+            </div>
+
+        </div>
+
+
+        <div class="grid-layout">
+
+            <!-- ROUTING TABLE -->
+
+            <div class="panel span-2">
+
+                <h2>Routing Policy Table</h2>
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Packet Type</th>
+                            <th>Destination</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="routing-table">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+
+            <!-- CURRENT PACKET -->
+
+            <div class="panel">
+
+                <h2>Current Packet</h2>
+
+                <h1 id="current-packet">---</h1>
+
+                <p id="current-destination"></p>
+
+            </div>
+
+
+
+            <!-- UPCOMING PACKETS -->
+
+            <div class="panel">
+
+                <h2>Upcoming Packets</h2>
+
+                <ul id="packet-stack">
+
+                </ul>
+
+            </div>
+
+
+
+            <!-- NETWORK EVENT -->
+
+            <div class="panel">
+
+                <h2>Current Network Event</h2>
+
+                <h3 id="network-event" class="event-neutral">No Active Events</h3>
+
+            </div>
+
+
+
+            <!-- SERVERS + HEALTH MONITOR -->
+
+            <div class="panel span-2 servers-row">
+
+                <div class="servers-col">
+
+                    <h2>Servers</h2>
+
+                    <div id="servers">
+
+                    </div>
+
+                </div>
+
+                <div class="monitor-col">
+
+                    <h2>Network Health Monitor</h2>
+
+                    <div id="health-monitor">
+
+                        <div class="monitor-top">
+                            <span id="monitor-status" class="monitor-status status-stable">STABLE</span>
+                            <span id="monitor-percent">100%</span>
+                        </div>
+
+                        <p class="monitor-caption">Last Change</p>
+                        <p id="health-reason">No health changes yet.</p>
+
+                        <p class="monitor-caption">Event Log</p>
+                        <ul id="health-log"></ul>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ABILITIES -->
+
+            <div class="panel">
+
+                <h2>Special SDN Abilities</h2>
+
+                <p id="ability-firewall" class="ability-row">F - Firewall <span class="ability-status">READY</span></p>
+                <p id="ability-routing" class="ability-row">R - Dynamic Routing <span class="ability-status">READY</span></p>
+                <p id="ability-freeze" class="ability-row">T - Traffic Freeze <span class="ability-status">READY</span></p>
+
+            </div>
+
+
+
+            <!-- CONTROLS -->
+
+            <div class="panel">
+
+                <h2>Controls</h2>
+
+                <p>Press 1-5 to Route Packets</p>
+
+                <p>Press 0 for Malware Drop Box</p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+
+    <!-- GAME OVER -->
+
+    <div id="game-over" class="hidden">
+
+        <div class="menu-card">
+
+            <p class="eyebrow" id="game-result-eyebrow">MISSION DEBRIEF</p>
+
+            <h1 id="game-result"></h1>
+
+            <h2 id="final-score"></h2>
+
+            <button onclick="location.reload()" class="diff-btn diff-easy" style="width:100%;">Play Again</button>
+
+        </div>
+
+    </div>
+
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
